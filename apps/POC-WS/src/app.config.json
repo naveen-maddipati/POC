@@ -1,0 +1,14 @@
+{
+  "$schema": "../../../node_modules/@hylandsoftware/satori-devkit/app-descriptor/application-descriptor.schema.json",
+  "applicationTitle": "POC-WS",
+  "language": {
+    "list": ["en"],
+    "default": "en",
+    "settings": {
+      "prefix": "./i18n/",
+      "suffix": ".json",
+      "plugins": ["@hylandsoftware/satori-layout", "@hylandsoftware/satori-ui"]
+    }
+  },
+  "navigation": {}
+}

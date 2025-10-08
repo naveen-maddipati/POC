@@ -1,0 +1,115 @@
+{
+  "name": "POC-WS",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "app",
+  "sourceRoot": "apps/POC-WS/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:application",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/POC-WS",
+        "index": "apps/POC-WS/src/index.html",
+        "browser": "apps/POC-WS/src/main.ts",
+        "polyfills": ["zone.js"],
+        "tsConfig": "apps/POC-WS/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/POC-WS/public"
+          },
+          "apps/POC-WS/src/app.config.json",
+          {
+            "glob": "**/*",
+            "input": "node_modules/@hylandsoftware/satori-layout/assets",
+            "output": "plugins/@hylandsoftware/satori-layout/assets"
+          },
+          {
+            "glob": "*.json",
+            "input": "node_modules/@hylandsoftware/satori-layout/i18n",
+            "output": "i18n/@hylandsoftware/satori-layout"
+          },
+          {
+            "glob": "*.json",
+            "input": "node_modules/@hylandsoftware/satori-ui/i18n",
+            "output": "i18n/@hylandsoftware/satori-ui"
+          }
+        ],
+        "styles": [
+          "apps/POC-WS/src/styles.scss",
+          "node_modules/@hylandsoftware/satori-layout/styles/satori-layout.scss"
+        ],
+        "scripts": [],
+        "baseHref": "./"
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "2mb",
+              "maximumError": "3mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "4kb",
+              "maximumError": "8kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "port": 4201
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "POC-WS:build:production"
+        },
+        "development": {
+          "buildTarget": "POC-WS:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "buildTarget": "POC-WS:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "serve-static": {
+      "continuous": true,
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "POC-WS:build",
+        "port": 4201,
+        "staticFilePath": "dist/apps/POC-WS/browser",
+        "spa": true
+      }
+    },
+    "pack": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd dist/apps/POC-WS/browser && bestzip ../../POC-WS.zip ."
+      },
+      "dependsOn": ["build"]
+    }
+  }
+}
