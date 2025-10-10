@@ -1,0 +1,80 @@
+{
+  // TypeScript Configuration
+  "typescript.preferences.strictNullChecks": "on",
+  "typescript.preferences.noSemicolons": "off", 
+  "typescript.preferences.includePackageJsonAutoImports": "auto",
+  "typescript.suggest.autoImports": true,
+  "typescript.suggest.paths": true,
+  "typescript.preferences.strictFunctionTypes": true,
+  "typescript.format.semicolons": "insert",
+  "typescript.inlayHints.parameterNames.enabled": "all",
+  "typescript.inlayHints.variableTypes.enabled": true,
+  "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
+  "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
+
+  // ESLint Configuration
+  "eslint.validate": [
+    "javascript",
+    "typescript",
+    "html"
+  ],
+  "eslint.format.enable": true,
+  
+  // Editor Configuration
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit",
+    "source.fixAll": "explicit"
+  },
+  "editor.formatOnSave": true,
+  "editor.rulers": [80, 120],
+  "editor.wordWrap": "bounded",
+  "editor.wordWrapColumn": 120,
+
+  // Language-specific settings
+  "[typescript]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit",
+      "source.organizeImports": "explicit"
+    }
+  },
+
+  // File exclusions for better performance
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/tmp": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/tmp": true,
+    "**/*.min.js": true
+  },
+
+  // Angular Language Service
+  "angular.experimental-ivy": true,
+  "angular.enableTemplateTypeChecker": true,
+
+  // Path Intellisense
+  "path-intellisense.mappings": {
+    "@core": "${workspaceFolder}/libs/core/src/lib",
+    "@shared": "${workspaceFolder}/libs/shared/src/lib", 
+    "@satori": "${workspaceFolder}/node_modules/@hylandsoftware",
+    "@app": "${workspaceFolder}/apps/POC-WS/src/app",
+    "@assets": "${workspaceFolder}/apps/POC-WS/src/assets",
+    "@types": "${workspaceFolder}/apps/POC-WS/src/types"
+  },
+
+  // Git Configuration
+  "git.autofetch": true,
+  "git.confirmSync": false,
+
+  // Problems Configuration
+  "problems.showCurrentInStatus": true,
+
+  // Terminal Configuration
+  "terminal.integrated.defaultProfile.osx": "zsh"
+}

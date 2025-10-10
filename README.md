@@ -1,23 +1,181 @@
-# POCWS
+# POC-WS Project
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+A modern Angular workspace using the Satori design system with strict TypeScript configuration for enterprise-level development.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+## 🚀 Quick Start
 
-Run `npx nx graph` to visually explore what got created. Now, let's get you up to speed!
+```bash
+# Clone and setup
+git clone https://github.com/naveen-maddipati/POC.git
+cd POC/POC-WS
+npm install
 
-## Run tasks
-
-To run tasks with Nx use:
-
-```sh
-npx nx <target> <project-name>
+# Start development
+npm start
 ```
 
-For example:
+## 📋 Essential Commands
 
-```sh
-npx nx build myproject
+| Command | Purpose |
+|---------|---------|
+| `npm start` | Start development server |
+| `npm run dev:validate` | Quick validation (lint + type-check) |
+| `npm run pre-commit` | Validate before committing |
+| `npm run validate` | Full validation pipeline |
+
+## 🏗️ Project Overview
+
+### **Technology Stack**
+- **Framework**: Angular 19 with standalone components
+- **Build System**: Nx workspace for monorepo management
+- **Language**: TypeScript with strict configuration
+- **Design System**: Satori by Hyland Software
+- **Styling**: SCSS with design tokens
+- **Authentication**: OIDC client integration
+- **Internationalization**: NGX-Translate
+
+### **Key Features**
+- ✅ **Strict TypeScript**: Enhanced type safety and error prevention
+- ✅ **Satori Integration**: Enterprise design system components
+- ✅ **Type-Safe Navigation**: Custom type guards for Satori components
+- ✅ **Optimized Development**: Fast builds with Nx caching
+- ✅ **Code Quality**: Automated linting and formatting
+- ✅ **Modern Tooling**: Bundler-style module resolution
+
+## 📚 Documentation
+
+### **Getting Started**
+- **[Development Workflow](./docs/DEVELOPMENT_WORKFLOW.md)** - Daily commands and workflows
+- **[TypeScript Configuration](./docs/TYPESCRIPT_CONFIG.md)** - Detailed technical setup
+
+### **Team Resources**
+- **Package Scripts**: See `package.json` for all available commands
+- **VS Code Settings**: Automatic formatting and error detection
+- **Satori Components**: Type-safe design system usage
+
+## 🎯 Project Goals
+
+This project demonstrates:
+
+1. **Enterprise-Grade TypeScript Setup**
+   - Strict compilation options
+   - Comprehensive linting rules
+   - Type-safe Satori integration
+
+2. **Developer Experience**
+   - Fast development workflows
+   - Intelligent IDE support
+   - Automated code quality checks
+
+3. **Design System Integration**
+   - Proper Satori component usage
+   - Theme management
+   - Navigation patterns
+
+## 🛠️ Development
+
+### **Prerequisites**
+- Node.js 18+ 
+- npm 9+
+- VS Code (recommended)
+
+### **First Time Setup**
+```bash
+npm install              # Install dependencies
+npm run dev:validate     # Verify setup
+```
+
+### **Daily Development**
+```bash
+npm start                # Start development server
+# Code with real-time validation in VS Code
+npm run pre-commit       # Before committing
+```
+
+## 🏛️ Architecture
+
+### **Workspace Structure**
+```
+POC-WS/
+├── apps/POC-WS/         # Main Angular application
+├── libs/                # Shared libraries (future)
+├── docs/                # Documentation
+├── .vscode/             # VS Code configuration
+└── node_modules/        # Dependencies including Satori packages
+```
+
+### **Satori Packages**
+- `@hylandsoftware/satori-devkit` - Core development tools
+- `@hylandsoftware/satori-layout` - Layout components
+- `@hylandsoftware/satori-workspace` - Workspace utilities
+- `@hylandsoftware/satori-tokens` - Design tokens
+
+## 🔧 Configuration Highlights
+
+### **TypeScript**
+- Target: ES2022 with bundler module resolution
+- Strict mode: All strict options enabled
+- Path mapping: Clean imports with `@core/*`, `@satori/*`
+
+### **ESLint**
+- TypeScript-specific rules
+- Naming convention enforcement
+- Nx module boundary checks
+
+### **VS Code**
+- Automatic lint fixing on save
+- Real-time type checking
+- Import organization
+- Path intellisense
+
+## 🚨 Important Notes
+
+> **⚠️ Satori Design System Compatibility**
+> 
+> Our TypeScript configuration **enhances** the Satori design system usage rather than deviating from it. All configurations maintain full compatibility with Satori packages while providing additional type safety and better developer experience.
+
+## 🤝 Contributing
+
+1. **Read Documentation**: Check `docs/DEVELOPMENT_WORKFLOW.md`
+2. **Follow Standards**: Use provided TypeScript and ESLint configurations
+3. **Validate Code**: Run `npm run pre-commit` before committing
+4. **Create PR**: Ensure `npm run validate` passes
+
+## 🆘 Getting Help
+
+### **Quick Troubleshooting**
+```bash
+npm run clean            # Clear cache
+npm install              # Reinstall dependencies
+npm run dev:validate     # Check for issues
+```
+
+### **Documentation**
+- **[Development Workflow](./docs/DEVELOPMENT_WORKFLOW.md)** - Daily commands and scenarios
+- **[TypeScript Config](./docs/TYPESCRIPT_CONFIG.md)** - Technical details and troubleshooting
+
+### **Common Issues**
+- Build failures → Check `npm run type-check`
+- Lint errors → Run `npm run lint:fix`
+- VS Code issues → Restart TypeScript server
+
+## 📊 Project Status
+
+- ✅ **Build**: Passing
+- ✅ **Lint**: Passing  
+- ✅ **Type Check**: Passing
+- ✅ **Satori Integration**: Compatible
+- ✅ **Documentation**: Complete
+
+## 📝 License
+
+MIT License - See LICENSE file for details.
+
+---
+
+**Happy coding!** 🚀
+
+For detailed workflows and daily commands, see **[Development Workflow Guide](./docs/DEVELOPMENT_WORKFLOW.md)**.
 ```
 
 These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.

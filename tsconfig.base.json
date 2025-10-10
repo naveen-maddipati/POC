@@ -1,20 +1,56 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    // Basic Configuration
     "rootDir": ".",
     "sourceMap": true,
-    "declaration": false,
-    "moduleResolution": "node",
+    "declaration": true,
+    "declarationMap": true,
+    "moduleResolution": "bundler",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2015",
+    "target": "es2022",
     "module": "esnext",
-    "lib": ["es2020", "dom"],
+    "lib": ["es2022", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    
+    // Strict Type Checking Options
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    
+    // Additional Checks
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true,
+    "noPropertyAccessFromIndexSignature": true,
+    
+    // Module Resolution
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": false,
+    
+    // Angular Specific
+    "useDefineForClassFields": false,
+    
+    // Path Mapping
+    "paths": {
+      "@core/*": ["libs/core/src/lib/*"],
+      "@shared/*": ["libs/shared/src/lib/*"],
+      "@satori/*": ["node_modules/@hylandsoftware/*"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

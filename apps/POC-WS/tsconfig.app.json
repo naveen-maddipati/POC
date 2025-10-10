@@ -2,9 +2,27 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    "types": []
+    "types": ["node"],
+    "paths": {
+      "@core/*": ["../../libs/core/src/lib/*"],
+      "@shared/*": ["../../libs/shared/src/lib/*"],
+      "@satori/*": ["../../node_modules/@hylandsoftware/*"],
+      "@app/*": ["./src/app/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@types/*": ["./src/types/*"]
+    }
   },
   "files": ["src/main.ts"],
-  "include": ["src/**/*.d.ts"],
-  "exclude": ["jest.config.ts", "src/**/*.test.ts", "src/**/*.spec.ts"]
+  "include": [
+    "src/**/*.d.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ],
+  "exclude": [
+    "jest.config.ts", 
+    "src/**/*.test.ts", 
+    "src/**/*.spec.ts",
+    "cypress/**/*",
+    "**/*.cy.ts"
+  ]
 }
