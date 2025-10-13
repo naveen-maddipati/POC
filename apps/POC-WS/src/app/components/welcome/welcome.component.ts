@@ -6,6 +6,7 @@
 import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -46,6 +47,7 @@ interface TestResult {
   imports: [
     CommonModule,
     FormsModule,
+    RouterModule,
     MatCardModule,
     MatButtonModule,
     MatProgressSpinnerModule,
@@ -72,6 +74,16 @@ interface TestResult {
             Comprehensive testing and demonstration of Nuxeo Platform capabilities
           </mat-card-subtitle>
         </mat-card-header>
+        <mat-card-actions class="header-actions">
+          <button mat-raised-button color="primary" routerLink="/welcome">
+            <mat-icon>home</mat-icon>
+            Nuxeo Integration
+          </button>
+          <button mat-raised-button color="accent" routerLink="/api-discovery">
+            <mat-icon>explore</mat-icon>
+            API Discovery
+          </button>
+        </mat-card-actions>
       </mat-card>
 
       <!-- Connection Status -->
@@ -423,6 +435,28 @@ interface TestResult {
           color: rgba(255,255,255,0.9);
           font-size: 16px;
           line-height: 1.5;
+        }
+      }
+      
+      .header-actions {
+        display: flex;
+        gap: 12px;
+        padding: 0 24px 24px;
+        justify-content: center;
+        
+        button {
+          color: white;
+          border: 2px solid rgba(255,255,255,0.3);
+          
+          &.mat-mdc-raised-button {
+            background-color: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+          }
+          
+          &:hover {
+            background-color: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.5);
+          }
         }
       }
     }
