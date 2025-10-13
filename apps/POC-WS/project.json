@@ -43,7 +43,10 @@
           "node_modules/@hylandsoftware/satori-layout/styles/satori-layout.scss"
         ],
         "scripts": [],
-        "baseHref": "./"
+        "baseHref": "./",
+        "allowedCommonJsDependencies": [
+          "nuxeo"
+        ]
       },
       "configurations": {
         "production": {
@@ -73,7 +76,8 @@
       "continuous": true,
       "executor": "@angular-devkit/build-angular:dev-server",
       "options": {
-        "port": 4201
+        "port": 4201,
+        "proxyConfig": "proxy.conf.json"
       },
       "configurations": {
         "production": {
