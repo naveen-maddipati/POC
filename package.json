@@ -1,11 +1,11 @@
 {
-  "name": "@poc-ws/source",
+  "name": "@nuxeo-satori-workspace/source",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "build": "nx build POC-WS",
-    "start": "nx serve POC-WS",
-    "pack": "nx pack POC-WS",
+    "build": "nx build Nuxeo-Satori-UI",
+    "start": "nx serve Nuxeo-Satori-UI",
+    "pack": "nx pack Nuxeo-Satori-UI",
     "satori": "satori",
     "lint": "nx run-many --target=lint --all",
     "lint:fix": "nx run-many --target=lint --all --fix",
@@ -37,6 +37,7 @@
     "@angular/router": "~19.2.14",
     "@hylandsoftware/satori-devkit": "latest",
     "@hylandsoftware/satori-layout": "^0.1.0",
+    "@hylandsoftware/satori-ui": "^0.1.0",
     "@hylandsoftware/satori-workspace": "0.1.0",
     "@ngx-translate/core": "^17.0.0",
     "@types/node": "^24.7.2",

@@ -1,0 +1,37 @@
+{
+  "$schema": "../../../node_modules/@hylandsoftware/satori-devkit/app-descriptor/application-descriptor.schema.json",
+  "applicationTitle": "Nuxeo Satori UI",
+  "language": {
+    "list": ["en"],
+    "default": "en",
+    "settings": {
+      "prefix": "./i18n/",
+      "suffix": ".json",
+      "plugins": ["@hylandsoftware/satori-layout", "@hylandsoftware/satori-ui"]
+    }
+  },
+  "navigation": {
+    "items": [
+      {
+        "label": "Dashboard",
+        "path": "/dashboard"
+      },
+      {
+        "label": "Nuxeo Integration",
+        "path": "/welcome"
+      },
+      {
+        "label": "API Discovery",
+        "path": "/api-discovery"
+      },
+      {
+        "label": "Enterprise Demo",
+        "path": "/enterprise-demo"
+      },
+      {
+        "label": "Document Creation",
+        "path": "/document-creation"
+      }
+    ]
+  }
+}

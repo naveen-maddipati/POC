@@ -1,13 +1,13 @@
-# POC-WS Project
+# Nuxeo Satori Workspace
 
-A modern Angular workspace using the Satori design system with strict TypeScript configuration for enterprise-level development.
+A modern Angular workspace using the Satori design system with enterprise Nuxeo integration for content management operations.
 
 ## 🚀 Quick Start
 
 ```bash
 # Clone and setup
 git clone https://github.com/naveen-maddipati/POC.git
-cd POC/POC-WS
+cd POC/Nuxeo-Satori-Workspace
 npm install
 
 # Start development
@@ -18,7 +18,7 @@ npm start
 
 | Command | Purpose |
 |---------|---------|
-| `npm start` | Start development server |
+| `npm start` | Start development server (Nuxeo-Satori-UI) |
 | `npm run dev:validate` | Quick validation (lint + type-check) |
 | `npm run pre-commit` | Validate before committing |
 | `npm run validate` | Full validation pipeline |
