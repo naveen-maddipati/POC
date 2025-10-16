@@ -11,26 +11,30 @@
     }
   },
   "navigation": {
-    "items": [
+    "disableEnvironmentSwitcher": true,
+   "primary": [
       {
-        "label": "Dashboard",
-        "path": "/dashboard"
+        "title": "Dashboard",
+        "path": "/dashboard", 
+        "icon": "dashboard"
       },
       {
-        "label": "Nuxeo Integration",
-        "path": "/welcome"
+        "title": "Nuxeo Integration", 
+        "path": "/welcome" 
       },
       {
-        "label": "API Discovery",
-        "path": "/api-discovery"
+        "title": "API Discovery",
+        "path": "/api-discovery" 
       },
       {
-        "label": "Enterprise Demo",
-        "path": "/enterprise-demo"
+        "title": "Enterprise Demo",
+        "path": "/enterprise-demo",
+        "image": "./assets/demo.png" 
       },
       {
-        "label": "Document Creation",
-        "path": "/document-creation"
+        "title": "Document Creation",
+        "path": "/document-creation", 
+        "icon": "document"   
       }
     ]
   }

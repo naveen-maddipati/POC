@@ -8,6 +8,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { HttpClient } from '@angular/common/http';
+import { catchError, finalize } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { UserService } from '../../../core/services/user.service';
 
 @Component({
   selector: 'app-document-creation',
@@ -20,7 +25,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatIconModule,
     MatInputModule,
     MatSelectModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatProgressBarModule
   ],
   template: `
     <div style="padding: 20px; max-width: 800px; margin: 0 auto;">
@@ -34,6 +40,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
           <mat-card-subtitle>Use Nuxeo automation to create documents</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content style="padding: 20px;">
+          @if (loading()) {
+            <mat-progress-bar mode="indeterminate" style="margin-bottom: 16px;"></mat-progress-bar>
+          }
           <form [formGroup]="documentForm" (ngSubmit)="createDocument()" style="display: grid; gap: 16px;">
             <mat-form-field appearance="outline">
               <mat-label>Document Type</mat-label>
@@ -66,10 +75,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
             </mat-form-field>
 
             <div style="display: flex; gap: 12px; justify-content: flex-end;">
-              <button mat-button type="button" (click)="resetForm()">Reset</button>
-              <button mat-raised-button color="primary" type="submit" [disabled]="!documentForm.valid">
-                <mat-icon>add</mat-icon>
-                Create Document
+              <button mat-button type="button" (click)="resetForm()" [disabled]="loading()">Reset</button>
+              <button mat-raised-button color="primary" type="submit" [disabled]="!documentForm.valid || loading()">
+                <mat-icon>{{ loading() ? 'hourglass_empty' : 'add' }}</mat-icon>
+                {{ loading() ? 'Creating...' : 'Create Document' }}
               </button>
             </div>
           </form>
@@ -88,10 +97,24 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   `
 })
 export class DocumentCreationComponent {
+  private readonly http = inject(HttpClient);
+  private readonly userService = inject(UserService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly fb = inject(FormBuilder);
 
-  readonly creationResult = signal<any>(null);
+  readonly creationResult = signal<{
+    id: string;
+    type: string;
+    name: string;
+    title: string;
+    description?: string | undefined;
+    parentPath: string;
+    created: string;
+    status: string;
+    path?: string | undefined;
+    state?: string | undefined;
+  } | null>(null);
+  readonly loading = signal<boolean>(false);
 
   readonly documentForm = this.fb.group({
     type: ['File', Validators.required],
@@ -102,25 +125,114 @@ export class DocumentCreationComponent {
   });
 
   createDocument() {
-    if (this.documentForm.valid) {
-      const formValue = this.documentForm.value;
-      
-      const mockResult = {
-        id: 'doc-' + Date.now(),
-        type: formValue.type,
-        name: formValue.name,
-        title: formValue.title || formValue.name,
-        description: formValue.description,
-        parentPath: formValue.parentPath,
-        created: new Date().toISOString(),
-        status: 'created'
-      };
-
-      this.creationResult.set(mockResult);
-      this.snackBar.open('Document created successfully!', 'Close', {
+    if (!this.documentForm.valid) {
+      this.snackBar.open('Please fill all required fields', 'Close', {
         duration: 3000
       });
+      return;
     }
+
+    this.loading.set(true);
+    this.creationResult.set(null);
+
+    const formValue = this.documentForm.value;
+    
+    // Prepare the Nuxeo automation request payload (based on actual API spec)
+    const automationPayload = {
+      params: {
+        type: formValue.type,
+        name: formValue.name,
+        properties: `dc:title=${formValue.title || formValue.name}\ndc:description=${formValue.description || ''}`
+      },
+      input: `doc:${formValue.parentPath || '/default-domain/workspaces'}`,
+      context: {}
+    };
+
+    console.log('Creating document with payload:', automationPayload);
+
+    // Get authentication header from UserService (same pattern as document.service.ts)
+    const authHeader = this.userService.getBasicAuthHeader();
+    const headers: { [key: string]: string } = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    };
+    
+    if (authHeader) {
+      headers['Authorization'] = authHeader;
+      console.log('Using authentication from UserService');
+    } else {
+      // Fallback to default credentials for development (same as document.service.ts)
+      const credentials = btoa('Administrator:Administrator');
+      headers['Authorization'] = `Basic ${credentials}`;
+      console.log('No user authentication found, using fallback credentials');
+    }
+    
+    // Make the actual API call to Nuxeo automation endpoint (using correct API path)
+    this.http.post<{
+      uid?: string;
+      id?: string;
+      type?: string;
+      title?: string;
+      'dc:description'?: string;
+      parentRef?: string;
+      created?: string;
+      path?: string;
+      state?: string;
+    }>('http://localhost:8080/nuxeo/api/v1/automation/Document.Create', automationPayload, {
+      headers
+    }).pipe(
+      catchError(error => {
+        console.error('Document creation failed:', error);
+        console.error('Error details:', {
+          status: error.status,
+          statusText: error.statusText,
+          errorBody: error.error,
+          url: error.url
+        });
+        
+        let errorMessage = 'Failed to create document: ';
+        if (error.status === 500) {
+          errorMessage += 'Server error - check Nuxeo server logs and payload format';
+        } else if (error.status === 401) {
+          errorMessage += 'Authentication failed';
+        } else if (error.status === 403) {
+          errorMessage += 'Permission denied';
+        } else {
+          errorMessage += error.error?.message || error.message || 'Network error';
+        }
+        
+        this.snackBar.open(errorMessage, 'Close', {
+          duration: 5000
+        });
+        return of(null);
+      }),
+      finalize(() => this.loading.set(false))
+    ).subscribe(response => {
+      if (response) {
+        console.log('Document created successfully:', response);
+        
+        const result = {
+          id: response.uid || response.id || 'Unknown ID',
+          type: response.type || formValue.type || 'File',
+          name: response.title || formValue.name || 'Untitled',
+          title: response.title || formValue.title || formValue.name || 'Untitled',
+          description: response['dc:description'] || formValue.description || undefined,
+          parentPath: response.parentRef || formValue.parentPath || '/default-domain/workspaces',
+          created: response.created || new Date().toISOString(),
+          status: 'created' as const,
+          path: response.path,
+          state: response.state
+        };
+
+        this.creationResult.set(result);
+        this.snackBar.open('Document created successfully!', 'Close', {
+          duration: 3000
+        });
+        
+        // Reset form after successful creation
+        this.resetForm();
+      }
+    });
   }
 
   resetForm() {
@@ -132,5 +244,6 @@ export class DocumentCreationComponent {
       parentPath: '/default-domain/workspaces'
     });
     this.creationResult.set(null);
+    this.loading.set(false);
   }
 }

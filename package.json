@@ -35,7 +35,7 @@
     "@angular/platform-browser": "~19.2.14",
     "@angular/platform-browser-dynamic": "~19.2.0",
     "@angular/router": "~19.2.14",
-    "@hylandsoftware/satori-devkit": "latest",
+    "@hylandsoftware/satori-devkit": "^0.1.0",
     "@hylandsoftware/satori-layout": "^0.1.0",
     "@hylandsoftware/satori-ui": "^0.1.0",
     "@hylandsoftware/satori-workspace": "0.1.0",
