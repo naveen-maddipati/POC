@@ -12,7 +12,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { HttpClient } from '@angular/common/http';
 import { catchError, finalize } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { UserService } from '../../../core/services/user.service';
+import { UserService } from '../../../../../../src/core/services';
 
 @Component({
   selector: 'app-document-creation',

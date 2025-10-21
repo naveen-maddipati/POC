@@ -4,8 +4,11 @@
   "license": "MIT",
   "scripts": {
     "build": "nx build Nuxeo-Satori-UI",
+    "build:fresh": "npm run constants:generate && nx build Nuxeo-Satori-UI",
     "start": "nx serve Nuxeo-Satori-UI",
+    "start:fresh": "npm run constants:generate && nx serve Nuxeo-Satori-UI",
     "pack": "nx pack Nuxeo-Satori-UI",
+    "pack:fresh": "npm run constants:generate && nx pack Nuxeo-Satori-UI",
     "satori": "satori",
     "lint": "nx run-many --target=lint --all",
     "lint:fix": "nx run-many --target=lint --all --fix",
@@ -24,7 +27,8 @@
     "validate": "npm run lint && npm run type-check && npm run test && npm run build",
     "dev:validate": "npm run lint:fix && npm run type-check",
     "pre-commit": "npm run dev:validate",
-    "ci": "npm run validate"
+    "ci": "npm run validate",
+    "constants:generate": "node scripts/generate-constants.js"
   },
   "private": true,
   "dependencies": {

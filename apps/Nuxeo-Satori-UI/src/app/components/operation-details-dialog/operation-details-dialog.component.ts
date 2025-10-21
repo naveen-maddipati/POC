@@ -9,7 +9,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatCardModule } from '@angular/material/card';
-import { AutomationOperation } from '../../core/services/automation-operations.service';
+import { AutomationOperationFull as AutomationOperation } from '../../../../../../src/core/services';
 
 @Component({
   selector: 'app-operation-details-dialog',

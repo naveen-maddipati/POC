@@ -11,10 +11,10 @@ export const environment = {
   
   // Nuxeo Platform Configuration
   nuxeo: {
-    baseURL: process.env['NUXEO_URL'] || 'https://nuxeo.yourdomain.com/nuxeo/',
+    baseURL: '/nuxeo/',
     auth: {
       method: 'token' as const,
-      token: process.env['NUXEO_TOKEN'] || ''
+      token: '' // Set your production token here or configure at runtime
     },
     timeout: 60000, // 60 seconds
     httpTimeout: 60000, // 60 seconds
@@ -47,6 +47,6 @@ export const environment = {
   security: {
     enableCSRF: true,
     corsEnabled: false,
-    allowedOrigins: ['https://yourdomain.com']
+    allowedOrigins: ['http://localhost:8080']
   }
 };

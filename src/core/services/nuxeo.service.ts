@@ -179,7 +179,7 @@ export class NuxeoService {
         this.logger.logNuxeoOperation('getChildren', { pathOrId, ...params });
 
         return from(
-          this.nuxeoClient.operation(NUXEO_OPERATIONS.DOCUMENT_GET_CHILDREN)
+          this.nuxeoClient.operation(NUXEO_OPERATIONS.Document_GetChildren)
             .input(pathOrId)
             .params(params)
             .execute() as Promise<INuxeoDocuments>
@@ -315,7 +315,7 @@ export class NuxeoService {
         this.logger.logNuxeoOperation('query', params);
 
         return from(
-          this.nuxeoClient.operation(NUXEO_OPERATIONS.DOCUMENT_QUERY)
+          this.nuxeoClient.operation(NUXEO_OPERATIONS.Document_Query)
             .params(params)
             .execute() as Promise<INuxeoDocuments>
         ).pipe(

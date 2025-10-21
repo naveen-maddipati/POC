@@ -10,7 +10,7 @@ import { catchError, tap, retry, timeout } from 'rxjs/operators';
 
 import { LoggingService } from './logging.service';
 import { UserService } from './user.service';
-import { DOCUMENT_CONSTANTS } from '../constants/document.constants';
+import { DOCUMENT_CONSTANTS, NUXEO_OPERATIONS } from '../constants/document.constants';
 
 import { 
   NuxeoDocument, 
@@ -96,7 +96,7 @@ export class EnterpriseDocumentApiService {
 
     this.logger.info('Creating document', { type: params.type, name: params.name, parent: parentPath }, 'EnterpriseDocumentApi');
 
-    return this.http.post<NuxeoDocument>(`${this.baseUrl}/api/v1/automation/Document.Create`, body, { 
+    return this.http.post<NuxeoDocument>(`${this.baseUrl}/api/v1/automation/${NUXEO_OPERATIONS.Document_Create}`, body, { 
       headers,
       params: new HttpParams().set('input', `doc:${parentPath}`)
     }).pipe(
@@ -130,7 +130,7 @@ export class EnterpriseDocumentApiService {
 
     this.logger.info('Updating document', { path: documentPath, properties: Object.keys(params.properties) }, 'EnterpriseDocumentApi');
 
-    return this.http.post<NuxeoDocument>(`${this.baseUrl}/api/v1/automation/Document.Update`, body, { 
+    return this.http.post<NuxeoDocument>(`${this.baseUrl}/api/v1/automation/${NUXEO_OPERATIONS.Document_Update}`, body, { 
       headers,
       params: new HttpParams()
         .set('input', `doc:${documentPath}`)
@@ -161,7 +161,7 @@ export class EnterpriseDocumentApiService {
 
     this.logger.info('Moving document', { from: documentPath, to: params.target }, 'EnterpriseDocumentApi');
 
-    return this.http.post<NuxeoDocument>(`${this.baseUrl}/api/v1/automation/Document.Move`, body, { 
+    return this.http.post<NuxeoDocument>(`${this.baseUrl}/api/v1/automation/${NUXEO_OPERATIONS.Document_Move}`, body, { 
       headers,
       params: new HttpParams().set('input', `doc:${documentPath}`)
     }).pipe(
@@ -190,7 +190,7 @@ export class EnterpriseDocumentApiService {
 
     this.logger.info('Copying document', { from: documentPath, to: params.target }, 'EnterpriseDocumentApi');
 
-    return this.http.post<NuxeoDocument>(`${this.baseUrl}/api/v1/automation/Document.Copy`, body, { 
+    return this.http.post<NuxeoDocument>(`${this.baseUrl}/api/v1/automation/${NUXEO_OPERATIONS.Document_Copy}`, body, { 
       headers,
       params: new HttpParams().set('input', `doc:${documentPath}`)
     }).pipe(
@@ -326,7 +326,7 @@ export class EnterpriseDocumentApiService {
       currentPage: params.currentPageIndex 
     }, 'EnterpriseDocumentApi');
 
-    return this.http.post<SearchResponse>(`${this.baseUrl}/api/v1/automation/Repository.Query`, body, { headers }).pipe(
+    return this.http.post<SearchResponse>(`${this.baseUrl}/api/v1/automation/${NUXEO_OPERATIONS.Repository_Query}`, body, { headers }).pipe(
       timeout(DOCUMENT_CONSTANTS.API.TIMEOUT),
       retry(2),
       tap((response) => {
@@ -520,4 +520,23 @@ export class EnterpriseDocumentApiService {
       })
     );
   }
+
+  // ==================== INTEGRATION EXAMPLES ====================
+  
+  /**
+   * Example: Using auto-generated constants for type safety
+   * 
+   * You can now use any of the 357 operations from NUXEO_OPERATIONS:
+   * 
+   * // Direct usage with auto-generated constants
+   * this.executeOperation(NUXEO_OPERATIONS.BlobHolder_AttachOnCurrentDocument, {...})
+   * this.executeOperation(NUXEO_OPERATIONS.PDF_ExtractText, {...})
+   * this.executeOperation(NUXEO_OPERATIONS.Workflow_GetOpenTasks, {...})
+   * 
+   * // Or use convenient aliases from DOCUMENT_CONSTANTS
+   * this.executeOperation(DOCUMENT_CONSTANTS.OPERATIONS.CREATE, {...})
+   * this.executeOperation(DOCUMENT_CONSTANTS.OPERATIONS.ATTACH_BLOB, {...})
+   * 
+   * // All operations are type-safe and auto-generated from live server
+   */
 }

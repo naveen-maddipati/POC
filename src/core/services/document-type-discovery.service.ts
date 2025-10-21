@@ -11,6 +11,9 @@ import { map, catchError, tap, shareReplay } from 'rxjs/operators';
 import { UserService } from './user.service';
 import { DOCUMENT_CONSTANTS } from '../constants/document.constants';
 
+// Note: NUXEO_OPERATIONS and NuxeoOperation are available via:
+// import { NUXEO_OPERATIONS, type NuxeoOperation } from '../constants/document.constants';
+
 export interface DocumentTypeInfo {
   name: string;
   category: string;

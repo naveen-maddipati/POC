@@ -1021,7 +1021,7 @@ export class WelcomeComponent implements OnInit, OnDestroy {
     return this.runTest('Create Test Document', async () => {
       const testDoc = {
         'entity-type': 'document',
-        type: NUXEO_DOCUMENT_TYPES.FOLDER,
+        type: NUXEO_DOCUMENT_TYPES.Folder,
         name: `test-folder-${Date.now()}`,
         properties: {
           'dc:title': 'Test Folder from Angular Integration'
@@ -1130,7 +1130,7 @@ export class WelcomeComponent implements OnInit, OnDestroy {
   async createTestFolder(): Promise<void> {
     const testDoc = {
       'entity-type': 'document',
-      type: NUXEO_DOCUMENT_TYPES.FOLDER,
+      type: NUXEO_DOCUMENT_TYPES.Folder,
       name: `test-folder-${Date.now()}`,
       properties: {
         'dc:title': 'Test Folder from Angular Integration',

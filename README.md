@@ -44,9 +44,11 @@ npm start
 
 ## 📚 Documentation
 
+
 ### **Getting Started**
 - **[Development Workflow](./docs/DEVELOPMENT_WORKFLOW.md)** - Daily commands and workflows
 - **[TypeScript Configuration](./docs/TYPESCRIPT_CONFIG.md)** - Detailed technical setup
+- **[Nuxeo Constants Integration](./docs/features/constants-integration.md)** - Guide to auto-generated and manual Nuxeo constants
 
 ### **Team Resources**
 - **Package Scripts**: See `package.json` for all available commands

@@ -34,6 +34,17 @@ npm start
 | `npm run build` | Build for production | Testing deployment |
 | `npm run clean` | Clean cache and dist | When build acts weird |
 
+### **Constants Generation Commands (Critical for Team)**
+
+| Command | Purpose | When to Use |
+|---------|---------|-------------|
+| `npm run constants:generate` | Generate all constants from live server | **Daily before starting development** |
+| `npm run start:fresh` | Generate constants + start dev server | **Most common - daily development** |
+| `npm run build:fresh` | Generate constants + build for production | **Before production releases** |
+| `npm run pack:fresh` | Generate constants + package application | **Before deployment packages** |
+
+> **⚠️ CRITICAL**: Always run `npm run constants:generate` or `npm run start:fresh` before starting work to ensure you have the latest server constants!
+
 ## 🔄 Recommended Daily Workflow
 
 ### **1. Starting Your Day**
@@ -48,6 +59,9 @@ git pull origin main
 # Install any new dependencies
 npm install
 
+# 🚨 CRITICAL: Generate latest constants from dev server
+npm run constants:generate
+
 # Start development server
 npm start
 ```
@@ -56,13 +70,17 @@ npm start
 
 ```bash
 # ✅ Your IDE handles this automatically:
-# - Real-time type checking
+# - Real-time type checking with Nuxeo constants
 # - Auto-lint on save
 # - Import organization
 # - Format on save
+# - IntelliSense for NUXEO_OPERATIONS, NUXEO_DOCUMENT_TYPES, etc.
 
 # 🔍 Quick validation (run occasionally)
 npm run dev:validate
+
+# 🔄 If server capabilities change during development
+npm run constants:generate
 ```
 
 ### **3. Before Committing Code**
@@ -96,22 +114,56 @@ npm run validate
 # 1. Create feature branch
 git checkout -b feature/new-awesome-feature
 
-# 2. Start development
+# 2. Generate latest constants for development
+npm run constants:generate
+
+# 3. Start development
 npm start
 
-# 3. Code with real-time feedback (VS Code automatic)
+# 4. Code with real-time feedback and Nuxeo constants IntelliSense
 
-# 4. Quick check during development
+# 5. Quick check during development
 npm run dev:validate
 
-# 5. Before committing
+# 6. Before committing
 npm run pre-commit
 git add .
 git commit -m "feat: add new awesome feature"
 
-# 6. Before pushing
+# 7. Before pushing
 npm run validate
 git push origin feature/new-awesome-feature
+```
+
+### **Scenario 2: Working with Different Environments**
+
+```bash
+# Development work (most common) - fresh start with constants
+npm run start:fresh
+
+# Production build with fresh constants
+npm run build:fresh
+
+# Package with fresh constants
+npm run pack:fresh
+```
+
+### **Scenario 3: Server Configuration Changes**
+
+```bash
+# When Nuxeo server capabilities change
+npm run constants:generate
+
+# Check what changed (review generated files)
+git diff src/core/constants/nuxeo.constants.ts
+
+# Update your code to use new constants
+# Test with updated constants
+npm run dev:validate
+
+# Commit constants update
+git add src/core/constants/nuxeo.constants.ts
+git commit -m "feat: update Nuxeo constants from server"
 ```
 
 ### **Scenario 2: Fixing Bugs**
@@ -220,6 +272,233 @@ Your VS Code is configured to automatically:
 > Organize Imports                  # Clean up imports
 ```
 
+## 🤖 Constants Generation Workflow (Team Guidelines)
+
+### **🚨 CRITICAL: Daily Constants Routine**
+
+**Every team member MUST run this before starting development:**
+
+```bash
+npm run constants:generate
+```
+
+**OR use the convenience script that generates constants AND starts development:**
+
+```bash
+npm run start:fresh
+```
+
+This ensures you have the latest:
+- **357 Nuxeo Operations** (Document_Create, Document_Query, etc.)
+- **50+ Document Types** (File, Folder, Picture, etc.)
+- **86+ Schemas** (dublincore, file, picture, etc.)
+- **64+ Facets** (Versionable, Publishable, Folderish, etc.)
+
+### **📋 Constants Generation Use Cases**
+
+#### **Daily Development (Most Common)**
+```bash
+# Option 1: Generate constants then start manually
+npm run constants:generate
+npm start
+
+# Option 2: One command to generate + start (RECOMMENDED)
+npm run start:fresh
+
+# Why: Ensures latest development server capabilities
+# When: Every morning, after server updates
+# Result: Updated constants in src/core/constants/nuxeo.constants.ts
+```
+
+#### **Feature Branch Preparation**
+```bash
+# When starting new feature
+git checkout -b feature/document-management
+npm run start:fresh  # Generate constants + start development
+
+# Alternative: Generate constants separately
+npm run constants:generate
+npm start
+```
+
+#### **Production Deployments**
+```bash
+# Production build with fresh constants
+npm run build:fresh
+
+# Package application with fresh constants  
+npm run pack:fresh
+
+# Why: Ensures production build has latest server capabilities
+# When: Before production releases
+```
+
+#### **Server Configuration Updates**
+```bash
+# When Nuxeo admin adds new document types or operations
+npm run constants:generate
+
+# Check what changed
+git diff src/core/constants/nuxeo.constants.ts
+
+# Commit the updates
+git add src/core/constants/nuxeo.constants.ts
+git commit -m "feat: update constants - new document types added"
+```
+
+#### **Quick Development Start**
+```bash
+# Fastest way to start development with fresh constants
+npm run start:fresh
+
+# This combines: constants generation + dev server start
+# Equivalent to: npm run constants:generate && npm start
+```
+
+### **🎯 Team Best Practices**
+
+#### **DO's ✅**
+- **Always run `npm run constants:generate` or `npm run start:fresh` before starting work**
+- **Use constants instead of string literals**: `NUXEO_DOCUMENT_TYPES.File` ❌ `'File'`
+- **Check IntelliSense for available constants**
+- **Commit constants updates when server changes**
+- **Use `:fresh` commands for important builds**: `npm run build:fresh`
+
+#### **DON'Ts ❌**
+- **Never hardcode operation names**: ❌ `'Document.Create'` ✅ `NUXEO_OPERATIONS.Document_Create`
+- **Don't skip constants generation when starting work**
+- **Don't use outdated constants files**
+- **Don't forget to use `:fresh` commands for production builds**
+
+### **🔍 Constants in Your Code**
+
+#### **Type-Safe Document Operations**
+```typescript
+// ❌ Before (error-prone)
+const doc = await createDocument('/path', 'File', properties);
+if (document.facets?.includes('Versionable')) { ... }
+
+// ✅ After (type-safe with constants)
+const doc = await createDocumentWithType(
+  '/path', 
+  NUXEO_DOCUMENT_TYPES.File,  // IntelliSense + validation
+  properties
+);
+if (this.documentService.isVersionable(document)) { ... }
+```
+
+#### **Schema-Aware Metadata**
+```typescript
+// ❌ Before (magic strings)
+const title = doc.properties['dc:title'];
+const filename = doc.properties['file:filename'];
+
+// ✅ After (schema constants)
+const title = this.documentService.getDocumentMetadata(
+  doc, 
+  NUXEO_SCHEMAS.dublincore, 
+  'title'
+);
+const filename = this.documentService.getDocumentMetadata(
+  doc, 
+  NUXEO_SCHEMAS.file, 
+  'filename'
+);
+```
+
+#### **Advanced Search with Type Safety**
+```typescript
+// ✅ Type-safe search with constants
+const results = await this.documentService.searchDocumentsByTypeAndFacets(
+  'search term',
+  [NUXEO_DOCUMENT_TYPES.File, NUXEO_DOCUMENT_TYPES.Picture], // Only these types
+  [NUXEO_FACETS.Downloadable], // Must be downloadable
+  [NUXEO_FACETS.HiddenInNavigation] // Must not be hidden
+);
+```
+
+### **🚀 Performance Benefits**
+
+#### **Development Speed**
+- **IntelliSense**: All 558+ constants available with autocomplete
+- **Type Safety**: Catch errors at compile time, not runtime
+- **Refactoring**: Rename constants across entire codebase safely
+
+#### **Maintenance**
+- **Server Sync**: Constants automatically match server capabilities
+- **Documentation**: Self-documenting code with meaningful constant names
+- **Consistency**: Same constants used across all team members
+
+### **🔄 Constants Update Workflow**
+
+#### **When Server Administrator Updates Nuxeo**
+```bash
+# 1. Server admin notifies team of changes
+# 2. Each developer updates their constants
+npm run constants:generate
+
+# 3. Review changes
+git diff src/core/constants/nuxeo.constants.ts
+
+# 4. Update code to use new constants if needed
+# 5. Test with updated constants
+npm run dev:validate
+
+# 6. Commit changes
+git add src/core/constants/nuxeo.constants.ts
+git commit -m "feat: update constants - new schema added"
+```
+
+#### **Before Major Releases**
+```bash
+# 1. Generate fresh constants and build
+npm run build:fresh
+
+# 2. Review any changes in constants
+git diff src/core/constants/nuxeo.constants.ts
+
+# 3. Full validation
+npm run validate
+
+# 4. Deploy with confidence
+```
+
+### **⚠️ Common Pitfalls & Solutions**
+
+#### **Problem: Constants Out of Sync**
+```bash
+# Symptom: Operations fail with "Unknown operation" errors
+# Solution:
+npm run constants:generate
+npm run dev:validate
+```
+
+#### **Problem: New Document Type Not Available**
+```bash
+# Symptom: TypeScript error "Property does not exist"
+# Solution:
+npm run constants:generate
+# Check if new type appears in NUXEO_DOCUMENT_TYPES
+```
+
+#### **Problem: Forgetting to Update Constants**
+```bash
+# Symptom: Using outdated server capabilities
+# Solution: Use :fresh commands that automatically generate constants
+npm run start:fresh     # For development
+npm run build:fresh     # For production builds
+npm run pack:fresh      # For deployment packages
+```
+
+### **📊 Constants Statistics (Current)**
+- **Total Constants**: 558+
+- **Operations**: 357 (automation endpoints)
+- **Document Types**: 50 (File, Folder, Picture, etc.)
+- **Schemas**: 86 (dublincore, file, picture, etc.)
+- **Facets**: 64 (Versionable, Publishable, etc.)
+- **Update Frequency**: As needed when server changes
+- **Team Sync**: Daily before development starts
+
 ## 🔧 Advanced Commands (Occasional Use)
 
 ### **Development Tools**
@@ -291,6 +570,9 @@ npm run lint && npm run type-check && npm run test && npm run build
 ### **Before Committing (Required)**
 
 - [ ] `npm run pre-commit` passes
+- [ ] **Constants are up-to-date**: `npm run generate:constants:dev` run today
+- [ ] **No magic strings**: All Nuxeo operations use constants (NUXEO_OPERATIONS.*)
+- [ ] **Type-safe document types**: Use NUXEO_DOCUMENT_TYPES instead of strings
 - [ ] No VS Code error indicators
 - [ ] Code follows naming conventions
 - [ ] Proper TypeScript types used
@@ -299,7 +581,10 @@ npm run lint && npm run type-check && npm run test && npm run build
 ### **Before Pull Request (Required)**
 
 - [ ] `npm run validate` passes completely
+- [ ] **Constants validation**: `npm run validate:constants` passes
+- [ ] **Environment-specific constants generated** (if deploying)
 - [ ] All new features have proper types
+- [ ] **Nuxeo constants used throughout**: No hardcoded operation/type names
 - [ ] Satori components used correctly
 - [ ] No console.log statements in production code
 - [ ] Documentation updated if needed
@@ -385,11 +670,32 @@ A: npm run satori add @hylandsoftware/component-name --project=POC-WS
 
 ## ⭐ Key Takeaways
 
-1. **Use `npm start` for daily development**
-2. **Use `npm run dev:validate` for quick checks**
-3. **Use `npm run pre-commit` before every commit**
-4. **Use `npm run validate` before PRs**
-5. **Let VS Code handle formatting automatically**
-6. **Check `TYPESCRIPT_CONFIG.md` for detailed explanations**
+1. **🚨 CRITICAL: Use `npm run start:fresh` for daily development (generates constants + starts server)**
+2. **Alternative: Run `npm run constants:generate` before starting work manually**
+3. **Use `npm run dev:validate` for quick checks**
+4. **Use `npm run pre-commit` before every commit**
+5. **Use `npm run validate` before PRs**
+6. **Always use Nuxeo constants instead of magic strings**:
+   - ✅ `NUXEO_OPERATIONS.Document_Create` 
+   - ❌ `'Document.Create'`
+7. **Use `:fresh` commands for important builds**:
+   - Development: `npm run start:fresh`
+   - Production: `npm run build:fresh`
+   - Packaging: `npm run pack:fresh`
+8. **Let VS Code handle formatting automatically**
+9. **Check `TYPESCRIPT_CONFIG.md` for detailed explanations**
+10. **See [Service Integration Summary](../features/service-integration-summary.md) for constants usage examples**
 
-Happy coding! 🚀
+### **📚 Essential Constants References**
+- **Operations**: `NUXEO_OPERATIONS.*` (357 available)
+- **Document Types**: `NUXEO_DOCUMENT_TYPES.*` (50+ available)
+- **Schemas**: `NUXEO_SCHEMAS.*` (86+ available)  
+- **Facets**: `NUXEO_FACETS.*` (64+ available)
+
+### **🎯 Quick Command Reference**
+- **Daily Start**: `npm run start:fresh`
+- **Manual Constants**: `npm run constants:generate`
+- **Production Build**: `npm run build:fresh`
+- **Quick Validation**: `npm run dev:validate`
+
+Happy coding with type-safe Nuxeo constants! 🚀

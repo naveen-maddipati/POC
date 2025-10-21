@@ -3,6 +3,18 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { of } from 'rxjs';
 import { catchError, timeout } from 'rxjs/operators';
 import { LoggingService } from './logging.service';
+import { environment } from '../../environments/environment';
+
+// Configuration for API base URLs using Angular environment
+const API_CONFIG = {
+  get nuxeoServerUrl() { 
+    // Remove trailing slash and /nuxeo/ if present for clean base URL
+    return environment.nuxeo.baseURL.replace(/\/nuxeo\/?$/, '');
+  },
+  get nuxeoApiUrl() { return `${this.nuxeoServerUrl}/nuxeo/api/v1`; },
+  get nuxeoSiteUrl() { return `${this.nuxeoServerUrl}/nuxeo/site`; },
+  get nuxeoJsonUrl() { return `${this.nuxeoServerUrl}/nuxeo/json`; }
+};
 
 export interface IApiEndpoint {
   readonly name: string;
@@ -68,8 +80,8 @@ export class ApiDiscoveryService {
           requiresAuth: false,
           category: 'Authentication',
           testPayload: {
-            username: 'Administrator',
-            password: 'Administrator'
+            username: environment.nuxeo.auth.username || 'Administrator',
+            password: environment.nuxeo.auth.password || 'Administrator'
           }
         },
         {
@@ -106,7 +118,7 @@ export class ApiDiscoveryService {
       endpoints: [
         {
           name: 'List Available Operations',
-          url: 'http://localhost:8080/nuxeo/site/automation',
+          url: `${API_CONFIG.nuxeoSiteUrl}/automation`,
           method: 'GET',
           description: 'Get service description and all available automation operations (official endpoint)',
           requiresAuth: true,
@@ -114,7 +126,7 @@ export class ApiDiscoveryService {
         },
         {
           name: 'Document Fetch',
-          url: 'http://localhost:8080/nuxeo/api/v1/automation/Document.Fetch',
+          url: `${API_CONFIG.nuxeoApiUrl}/automation/Document.Fetch`,
           method: 'POST',
           description: 'Fetch document by path or ID (confirmed available)',
           requiresAuth: true,
@@ -129,7 +141,7 @@ export class ApiDiscoveryService {
         },
         {
           name: 'Document Get Children',
-          url: 'http://localhost:8080/nuxeo/api/v1/automation/Document.GetChildren',
+          url: `${API_CONFIG.nuxeoApiUrl}/automation/Document.GetChildren`,
           method: 'POST',
           description: 'Get document children (confirmed available)',
           requiresAuth: true,
@@ -145,7 +157,7 @@ export class ApiDiscoveryService {
         },
         {
           name: 'Document Create',
-          url: 'http://localhost:8080/nuxeo/api/v1/automation/Document.Create',
+          url: `${API_CONFIG.nuxeoApiUrl}/automation/Document.Create`,
           method: 'POST',
           description: 'Create new document (confirmed available)',
           requiresAuth: true,
@@ -164,7 +176,7 @@ export class ApiDiscoveryService {
         },
         {
           name: 'Document Update',
-          url: 'http://localhost:8080/nuxeo/api/v1/automation/Document.Update',
+          url: `${API_CONFIG.nuxeoApiUrl}/automation/Document.Update`,
           method: 'POST',
           description: 'Update document properties (confirmed available)',
           requiresAuth: true,
@@ -181,7 +193,7 @@ export class ApiDiscoveryService {
         },
         {
           name: 'Document Delete',
-          url: 'http://localhost:8080/nuxeo/api/v1/automation/Document.Delete',
+          url: `${API_CONFIG.nuxeoApiUrl}/automation/Document.Delete`,
           method: 'POST',
           description: 'Delete document (confirmed available)',
           requiresAuth: true,
@@ -194,7 +206,7 @@ export class ApiDiscoveryService {
         },
         {
           name: 'Repository Query',
-          url: 'http://localhost:8080/nuxeo/api/v1/automation/Repository.Query',
+          url: `${API_CONFIG.nuxeoApiUrl}/automation/Repository.Query`,
           method: 'POST',
           description: 'Execute NXQL queries (confirmed available)',
           requiresAuth: true,
@@ -211,7 +223,7 @@ export class ApiDiscoveryService {
         },
         {
           name: 'Document Copy',
-          url: 'http://localhost:8080/nuxeo/api/v1/automation/Document.Copy',
+          url: `${API_CONFIG.nuxeoApiUrl}/automation/Document.Copy`,
           method: 'POST',
           description: 'Copy document to target location (confirmed available)',
           requiresAuth: true,
@@ -227,7 +239,7 @@ export class ApiDiscoveryService {
         },
         {
           name: 'Document Move',
-          url: 'http://localhost:8080/nuxeo/api/v1/automation/Document.Move',
+          url: `${API_CONFIG.nuxeoApiUrl}/automation/Document.Move`,
           method: 'POST',
           description: 'Move document to target location (confirmed available)',
           requiresAuth: true,
@@ -242,7 +254,7 @@ export class ApiDiscoveryService {
         },
         {
           name: 'Directory Read Entries',
-          url: 'http://localhost:8080/nuxeo/api/v1/automation/Directory.ReadEntries',
+          url: `${API_CONFIG.nuxeoApiUrl}/automation/Directory.ReadEntries`,
           method: 'POST',
           description: 'Read directory entries/vocabularies (confirmed available)',
           requiresAuth: true,
@@ -412,6 +424,21 @@ export class ApiDiscoveryService {
   }
 
   /**
+   * Get authentication header based on environment configuration
+   */
+  private getAuthHeader(): string | null {
+    const config = environment.nuxeo;
+    
+    if (config.auth.method === 'basic' && config.auth.username && config.auth.password) {
+      return 'Basic ' + btoa(`${config.auth.username}:${config.auth.password}`);
+    } else if (config.auth.method === 'token' && config.auth.token) {
+      return `Bearer ${config.auth.token}`;
+    }
+    
+    return null;
+  }
+
+  /**
    * Get all API categories
    */
   public getApiCategories(): IApiCategory[] {
@@ -516,15 +543,16 @@ export class ApiDiscoveryService {
       let headers = new HttpHeaders();
 
       // Special handling for automation service discovery
-      if (endpoint.url === '/nuxeo/site/automation') {
+      if (endpoint.url.includes('/nuxeo/site/automation')) {
         headers = headers.set('Accept', 'application/json+nxautomation');
         // Add Basic Auth as it's required by the server
         if (endpoint.requiresAuth) {
-          headers = headers.set('Authorization', 'Basic ' + btoa('Administrator:Administrator'));
+          const auth = this.getAuthHeader();
+          if (auth) headers = headers.set('Authorization', auth);
         }
         // Don't set Content-Type for GET requests to automation service discovery
         this.logger.info(`Testing automation service discovery: ${endpoint.url}`, {
-          headers: 'Accept: application/json+nxautomation, Authorization: Basic auth'
+          headers: 'Accept: application/json+nxautomation, Authorization configured'
         });
       }
       // Special handling for other Automation API endpoints
@@ -534,13 +562,15 @@ export class ApiDiscoveryService {
         
         // For automation login, don't use Basic Auth
         if (endpoint.name !== 'Automation Login Test' && endpoint.requiresAuth) {
-          headers = headers.set('Authorization', 'Basic ' + btoa('Administrator:Administrator'));
+          const auth = this.getAuthHeader();
+          if (auth) headers = headers.set('Authorization', auth);
         }
       } else {
         headers = headers.set('Content-Type', 'application/json');
         // Add basic auth for non-automation endpoints that require authentication
         if (endpoint.requiresAuth) {
-          headers = headers.set('Authorization', 'Basic ' + btoa('Administrator:Administrator'));
+          const auth = this.getAuthHeader();
+          if (auth) headers = headers.set('Authorization', auth);
         }
       }
 
@@ -698,7 +728,7 @@ export class ApiDiscoveryService {
         testedAt: r.testedAt
       })),
       exportedAt: new Date().toISOString(),
-      nuxeoServer: 'http://localhost:8080'
+      nuxeoServer: API_CONFIG.nuxeoServerUrl
     };
 
     return JSON.stringify(exportData, null, 2);
